@@ -72,6 +72,28 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
+// ================= UPDATE ORDER STATUS =================
+app.put('/api/admin/order-status/:id', async (req, res) => {
+    if (req.headers['x-admin-key'] !== ADMIN_KEY) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const { status } = req.body;
+
+        const order = await Order.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+
+        res.json(order);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 
 
 const PORT = process.env.PORT || 5000;
