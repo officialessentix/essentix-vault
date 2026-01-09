@@ -56,6 +56,23 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
+// ================= ADMIN ORDERS VIEW =================
+const ADMIN_KEY = process.env.ADMIN_KEY || "essentix-secret";
+
+app.get('/api/admin/orders', async (req, res) => {
+    if (req.headers['x-admin-key'] !== ADMIN_KEY) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const orders = await Order.find().sort({ date: -1 });
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
